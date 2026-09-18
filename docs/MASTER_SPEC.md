@@ -15,20 +15,25 @@
   - Aislamiento total en contenedores seguros (LXC/Docker Sandbox).
 
 ## 3. Esquema de Inversión y Formato Legal
-- Monto de la ronda pre-seed: $100,000 USD.
+- Monto de la ronda pre-seed: **$265,000 USD** (recalculado para 24 meses de runway real, ver §4).
 - Instrumento legal: SAFE (formato estándar Y Combinator).
 - Cobro: Crypto (USDC/USDT) a billetera corporativa/Lemon Cash con justificación de SAFE, o transferencia internacional (Wire/SWIFT) vía C-Corp en Delaware (Mercury/Wise).
+- Canales de búsqueda 100% asincrónicos (sin videollamadas): Wefunder, Republic (crowdfunding de equity), Platanus Ventures (entrevista por chat, no video), TinySeed / Earnest Capital / Calm Company Fund (fondos para SaaS solo-founder, proceso por escrito), AngelList/Wellfound.
+- **Nota importante**: la compra de un departamento propio (vivienda) NO forma parte del uso de fondos de la ronda — es gasto personal, separado, a pagar con ingresos propios cuando el negocio facture. Incluir gastos personales no declarados en el uso de fondos de un SAFE es mal uso de capital de riesgo y un riesgo legal/reputacional real. El runway sí incluye **alquiler**, que es gasto de vida legítimo.
 
-## 4. Uso de Fondos ($100,000 USD)
+## 4. Uso de Fondos ($265,000 USD, 24 meses)
 
 | Categoría | Detalle | Monto (USD) | % |
 |---|---|---|---|
-| Runway del fundador | 12–15 meses, ~$3,000 USD/mes limpios, dedicación 100% | $36,000 | 36.0% |
-| Equipamiento hardware | ThinkPad P16 Gen 3, MacBook Pro 16" M4 Max, Galaxy S26 Ultra, iPhone 17 Pro Max | $26,900 | 26.9% |
-| Marketing & influencers | Puerta falsa, Reddit/Google ads, prensa tech, creadores | $15,000 | 15.0% |
-| Infraestructura & cloud | Servidor central, dominios, SSL, pool de prueba en Hetzner | $11,816 | 11.8% |
-| Software & IAs | ChatGPT Pro, API Claude, Figma, v0/Bolt, cuentas dev | $5,284 | 5.3% |
-| **TOTAL** | | **$100,000** | **100%** |
+| Runway del fundador | Alquiler + gastos de vida, $4,200 USD/mes × 24 meses | $100,800 | 38.0% |
+| Equipamiento hardware | ThinkPad P16 Gen 3 (Docker/backend), MacBook Pro 16" M4 Max (Xcode/iOS), Galaxy S26 Ultra (pruebas Android/PWA), iPhone 17 Pro Max (pruebas iOS/Safari) | $26,900 | 10.2% |
+| Equipo (devs) | Ayuda para construir la app de administración | $30,000 | 11.3% |
+| Contenido orgánico | 1 persona part-time, $800/mes × 24 | $19,200 | 7.2% |
+| Marketing & publicidad | Ads, prensa tech, pago a creadores | $35,000 | 13.2% |
+| Infraestructura & cloud | Servidor central, dominios, SSL, pool de prueba en Hetzner | $18,000 | 6.8% |
+| Software & IAs | ChatGPT Pro ($200) + API Claude ($200) + Figma/otras (~$40), 24 meses | $10,560 | 4.0% |
+| Contingencia (10%) | Imprevistos | $24,046 | 9.1% |
+| **TOTAL** | | **~$264,506 ≈ $265,000** | **100%** |
 
 ## 5. Stack Tecnológico de Desarrollo
 - IA & razonamiento: ChatGPT Pro ($200/mo) + API Claude ($200/mo).
