@@ -54,41 +54,44 @@
 - Soporte/operación: 5% (3% en línea dedicada).
 - Contingencia: 5% (3% en línea dedicada).
 
-### Shared (CX/CPX/CAX) — fórmula `precio = (costo_hetzner + $0.40) / 0.385`, margen neto 37.5%
+**Costo real de un pod = servidor Hetzner + IP pública (IPv4, $0.60/mes, ya no viene gratis).** Otros costos de Hetzner que existen pero son opcionales (no van en el costo base): volumen extra $0.0767/GB/mes, backup automático +20% del precio del servidor, snapshot/imagen $0.0199/GB/mes.
 
-| Tipo | Specs | Costo Hetzner | Precio cliente | Margen neto |
-|---|---|---|---|---|
-| CX23 | 2vCPU, 4GB, 40GB | $6.49 | $17.90 | $6.71 (37.5%) |
-| CX33 | 4vCPU, 8GB, 80GB | $9.99 | $26.99 | $10.12 |
-| CX43 | 8vCPU, 16GB, 160GB | $18.49 | $49.06 | $18.40 |
-| CX53 | 16vCPU, 32GB, 320GB | $34.99 | $91.92 | $34.47 |
-| CAX11 | 2vCPU ARM, 4GB, 40GB | $6.99 | $19.19 | $7.20 |
-| CAX21 | 4vCPU ARM, 8GB, 80GB | $12.49 | $33.48 | $12.56 |
-| CAX31 | 8vCPU ARM, 16GB, 160GB | $24.99 | $65.95 | $24.73 |
-| CAX41 | 16vCPU ARM, 32GB, 320GB | $48.49 | $127.01 | $47.63 |
-| CPX12 | 1vCPU, 2GB, 40GB | $13.49 | $36.08 | $13.53 |
-| CPX22 | 2vCPU, 4GB, 80GB | $22.99 | $60.75 | $22.78 |
-| CPX32 | 4vCPU, 8GB, 160GB | $41.99 | $110.10 | $41.29 |
-| CPX42 | 8vCPU, 16GB, 320GB | $81.99 | $214.13 | $80.30 |
-| CPX52 | 12vCPU, 24GB, 480GB | $118.99 | $310.10 | $116.29 |
-| CPX62 | 16vCPU, 32GB, 640GB | $152.99 | $398.42 | $149.41 |
+### Shared (CX/CPX/CAX) — fórmula `precio = (costo_hetzner + IP + $0.40) / 0.385`, margen neto 37.5%
+
+| Tipo | Specs | Costo Hetzner | + IP | Costo total | Precio cliente | Margen neto |
+|---|---|---|---|---|---|---|
+| CX23 | 2vCPU, 4GB, 40GB | $6.49 | $0.60 | $7.09 | $19.45 | $7.29 (37.5%) |
+| CX33 | 4vCPU, 8GB, 80GB | $9.99 | $0.60 | $10.59 | $28.55 | $10.71 |
+| CX43 | 8vCPU, 16GB, 160GB | $18.49 | $0.60 | $19.09 | $50.62 | $18.98 |
+| CX53 | 16vCPU, 32GB, 320GB | $34.99 | $0.60 | $35.59 | $93.48 | $35.06 |
+| CAX11 | 2vCPU ARM, 4GB, 40GB | $6.99 | $0.60 | $7.59 | $20.75 | $7.78 |
+| CAX21 | 4vCPU ARM, 8GB, 80GB | $12.49 | $0.60 | $13.09 | $35.04 | $13.14 |
+| CAX31 | 8vCPU ARM, 16GB, 160GB | $24.99 | $0.60 | $25.59 | $67.51 | $25.32 |
+| CAX41 | 16vCPU ARM, 32GB, 320GB | $48.49 | $0.60 | $49.09 | $128.55 | $48.21 |
+| CPX12 | 1vCPU, 2GB, 40GB | $13.49 | $0.60 | $14.09 | $37.64 | $14.12 |
+| CPX22 | 2vCPU, 4GB, 80GB | $22.99 | $0.60 | $23.59 | $62.31 | $23.37 |
+| CPX32 | 4vCPU, 8GB, 160GB | $41.99 | $0.60 | $42.59 | $111.66 | $41.87 |
+| CPX42 | 8vCPU, 16GB, 320GB | $81.99 | $0.60 | $82.59 | $215.82 | $80.93 |
+| CPX52 | 12vCPU, 24GB, 480GB | $118.99 | $0.60 | $119.59 | $311.66 | $116.87 |
+| CPX62 | 16vCPU, 32GB, 640GB | $152.99 | $0.60 | $153.59 | $400.00 | $150.00 |
 
 ### Dedicado (CCX) — un poco más barato que AWS (precio = AWS equivalente × 0.92), reserva reducida (11%)
 
-| Tipo | Specs | Costo Hetzner | AWS equivalente | Precio cliente | Margen neto |
+| Tipo | Specs | Costo total (servidor+IP) | AWS equivalente | Precio cliente | Margen neto |
 |---|---|---|---|---|---|
-| CCX13 | 2vCPU, 8GB, 80GB | $50.49 | $70.08 (m6i.large) | $64.47 | $3.91 (6.1%) |
-| CCX23 | 4vCPU, 16GB, 160GB | $101.49 | $140.16 (m6i.xlarge) | $128.95 | $7.72 (6.0%) |
-| CCX33 | 8vCPU, 32GB, 240GB | $162.99 | $280.32 (m6i.2xlarge) | $257.89 | $55.81 (21.6%) |
-| CCX43 | 16vCPU, 64GB, 360GB | $325.49 | $560.64 | $515.79 | $112.53 (21.8%) |
-| CCX53 | 32vCPU, 128GB, 600GB | $629.49 | $1,121.28 | $1,031.58 | $246.96 (23.9%) |
-| CCX63 | 48vCPU, 192GB, 960GB | $1,006.99 | $1,681.92 | $1,547.37 | $307.88 (19.9%) |
+| CCX13 | 2vCPU, 8GB, 80GB | $51.09 | $70.08 (m6i.large) | $64.47 | $3.31 (5.1%) |
+| CCX23 | 4vCPU, 16GB, 160GB | $102.09 | $140.16 (m6i.xlarge) | $128.95 | $7.12 (5.5%) |
+| CCX33 | 8vCPU, 32GB, 240GB | $163.59 | $280.32 (m6i.2xlarge) | $257.89 | $55.21 (21.4%) |
+| CCX43 | 16vCPU, 64GB, 360GB | $326.09 | $560.64 | $515.79 | $111.93 (21.7%) |
+| CCX53 | 32vCPU, 128GB, 600GB | $630.09 | $1,121.28 | $1,031.58 | $246.36 (23.9%) |
+| CCX63 | 48vCPU, 192GB, 960GB | $1,007.59 | $1,681.92 | $1,547.37 | $307.28 (19.9%) |
 
 **Notas:**
 - El margen 95-97% mencionado originalmente para "SaaS" no aplica: cada pod consume infra real de Hetzner (costo variable).
 - Shared (CX/CPX/CAX) es el volumen principal: margen neto sano y consistente (~37.5%).
-- Dedicado (CCX) es upsell de nicho: CCX13/23 (los tamaños más pedidos) tienen margen muy ajustado (~6%) porque el costo de Hetzner ya casi empata con AWS ahí; CCX33 en adelante mejora bastante (20-24%) porque Hetzner escala mejor que AWS en instancias grandes.
+- Dedicado (CCX) es upsell de nicho: CCX13/23 (los tamaños más pedidos) tienen margen muy ajustado (~5%) porque el costo de Hetzner ya casi empata con AWS ahí; CCX33 en adelante mejora bastante (20-24%) porque Hetzner escala mejor que AWS en instancias grandes.
 - Se eligió no ser "mucho más barato" que AWS en CCX porque el margen no lo permite con los precios actuales de Hetzner (subieron 2-2.7x en junio 2026); apenas 8% debajo alcanza para competir sin regalar margen.
+- Backup automático (opcional, +20% del precio del servidor) y volúmenes extra ($0.0767/GB/mes) son upsells aparte, no forman parte del costo base del pod.
 
 ## 8. Naming
 Recomendación principal: **AgentPod** (agentpod.ai / .dev / .cloud).
