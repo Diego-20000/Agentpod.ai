@@ -40,7 +40,39 @@
 - Pitcheo 100% asincrónico: demo en vivo (Vercel), video Loom de 90s, pitch deck PDF (10 slides), comunicación escrita/audio.
 - Plataformas target: Platanus Ventures, Y Combinator, Thiel Fellowship, Signal by NFX.
 
-## 7. Naming
+## 7. Pricing y Márgenes (real, no estimado)
+
+**Proveedores confirmados:**
+- Pagos/billing: **Polar** (Merchant of Record, fee real: 4% + $0.40 USD por transacción).
+- Infraestructura: **Hetzner Cloud API** (aprovisionamiento de pods on-demand).
+
+**Costos de infra por plan (Hetzner, precios post-suba jun 2026):**
+- CX22 (2vCPU/4GB): ~$4.70/mes
+- CPX22 (2vCPU/4GB AMD, mejor para streaming): ~$9.50/mes
+
+**Planes:**
+
+| Plan | Precio | Incluye |
+|---|---|---|
+| Starter | $15/mes | 1 pod CX22, terminal web, 24/7 |
+| Pro | $39/mes | 1 pod CPX22 + streaming remoto 60fps |
+| Team | $99/mes | 3 pods mixtos, soporte prioritario |
+
+**Desglose de costos por plan (% del precio, con Polar):**
+
+| Rubro | Starter ($15) | Pro ($39) | Team ($99) |
+|---|---|---|---|
+| Infra (Hetzner) | $5.00 (33.3%) | $10.00 (25.6%) | $25.00 (25.3%) |
+| Comisión Polar (4% + $0.40) | $1.00 (6.7%) | $1.96 (5.0%) | $4.36 (4.4%) |
+| Marketing (10%) | $1.50 | $3.90 | $9.90 |
+| Soporte/operación (5%) | $0.75 | $1.95 | $4.95 |
+| Contingencia (5%) | $0.75 | $1.95 | $4.95 |
+| **Costos totales** | **$9.00 (60.0%)** | **$19.76 (50.7%)** | **$49.16 (49.7%)** |
+| **Margen neto** | **$6.00 (40.0%)** | **$19.24 (49.3%)** | **$49.84 (50.3%)** |
+
+**Nota**: el margen esperado de 95-97% mencionado originalmente para "SaaS" no aplica acá porque cada pod consume infra real de Hetzner (costo variable, no marginal-cero como el software puro). Margen neto real: 40-50% según plan, mejorando en los planes más grandes. Con mezcla de planes (meta 10-15 clientes en septiembre), el margen neto blend estimado es ~45-48%.
+
+## 8. Naming
 Recomendación principal: **AgentPod** (agentpod.ai / .dev / .cloud).
 
 Alternativas:
