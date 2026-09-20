@@ -3,7 +3,7 @@
 Decisiones sobre cómo funciona el producto día a día, más allá del pitch. Investigado contra prácticas reales de la industria (Fly.io/Railway/Render en resize y persistencia de datos; estándares de dunning/grace period en SaaS).
 
 ## 1. Qué viene instalado por defecto
-Imagen base Ubuntu 22.04 LTS con: git, Docker (para que el cliente corra sus propios contenedores, y para aislar agentes visuales — ver `PRODUCT_TYPES.md`), Python3, Node/npm, y **Claude Code preinstalado y pre-configurado** apuntando al MCP server local. Esto es lo que sostiene la promesa de "5 segundos" — no "instalá esto primero".
+Imagen base Ubuntu 22.04 LTS con: git, Docker (para que el cliente corra sus propios contenedores, y para aislar agentes visuales — ver `PRODUCT_TYPES.md`), Python3, Node/npm, y **Claude Code preinstalado y pre-configurado** apuntando al MCP server local. Esto es lo que sostiene la promesa de "menos de 60 segundos" — no "instalá esto primero" (corregido, ver `MASTER_SPEC.md` §2).
 
 En MCP Visual, además: Xvfb, noVNC, Chromium (uno por contenedor de agente).
 

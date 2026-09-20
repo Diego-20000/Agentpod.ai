@@ -34,6 +34,8 @@ Separar pantallas virtuales (displays distintos) evita que dos agentes se peleen
 ## Herramientas de coordinación (para que los agentes rindan mejor, no solo "se hablen")
 Investigado — esto es lo que la evidencia real de sistemas multi-agente dice que hace falta, más allá de darles un canal de chat.
 
+**Alcance para el MVP, sin ambigüedad**: **A2A básico (Nivel 1, dentro de un mismo pod) es parte del MVP** — es barato, no depende de infra nuestra, y sostiene el pitch central. **Todo lo del Nivel 2 (Mesh multi-pod, Redis multi-tenant, observabilidad cross-pod, patrón supervisor formal, discovery sofisticado) queda fuera del MVP**, se construye después de tener clientes pagando en Terminal — no antes. Antes de eso, primero hay que validar que alguien pague por "un entorno remoto donde su agente corra aislado", que es la pregunta que responde el Nivel 1 solo.
+
 **Nivel 1 — Mismo pod (default, sin costo extra, sin nada nuestro en el medio):**
 Si el cliente mete varios agentes en un mismo pod, se comunican solos: mismo disco, misma red local. Con pocos agentes (2-4), hablan directo entre sí (A2A local + carpeta compartida `/shared/`, con subcarpeta por agente para no pisarse archivos — lo pesado como imágenes va por disco, referencia por mensaje). Con muchos agentes (10+), conviene un patrón de **supervisor**: uno coordina, el resto le reporta a él en vez de hablarse todos entre todos (evita que se enrede exponencialmente).
 

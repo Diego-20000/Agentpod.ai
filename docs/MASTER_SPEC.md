@@ -99,7 +99,31 @@
 - Se eligió no ser "mucho más barato" que AWS en CCX porque el margen no lo permite con los precios actuales de Hetzner (subieron 2-2.7x en junio 2026); apenas 8% debajo alcanza para competir sin regalar margen.
 - Backup automático (opcional, +20% del precio del servidor) y volúmenes extra ($0.0767/GB/mes) son upsells aparte, no forman parte del costo base del pod.
 
-## 8. Naming
+## 8. Roadmap por fases (regla del proyecto: no construir para una escala que todavía no existe)
+
+Segunda opinión externa (revisión cruzada con otra IA, verificada contra fuentes reales) ayudó a separar "SaaS serio a escala" de "lo mínimo para cobrarle al primer cliente sin fundir la empresa". Regla fija: **construir solo el mecanismo necesario para que el próximo cliente pueda pagar, usar y seguir usando el producto — nada más.**
+
+**Fase 0 — Antes de construir (donde estamos)**
+Objetivo: demostrar que alguien paga. Landing + demo + outreach + precio real + **3 preventas o compromisos de pago reales** (ver `VALIDATION_PLAN.md`). No se construye nada del pod todavía.
+
+**Fase 1 — Primer cliente (el MVP real, no antes)**
+Objetivo: que una persona lo use sin que la empresa pierda plata ni dependa de control manual total.
+- Polar (única fuente de verdad de billing) + backend mínimo + Hetzner API + 1 pod MCP Terminal.
+- Provisioning seguro con aislamiento por VM: 1 VM Hetzner por cliente, imagen base reproducible, firewall (todo cerrado salvo MCP/A2A con token), SSH cerrado por defecto, MCP autenticado, A2A autenticado (básico, Nivel 1 de `PRODUCT_TYPES.md`), Docker sin acceso innecesario al host. Objetivo concreto: que un atacante medio no pueda convertir el primer pod en puerta de entrada al resto de la infra.
+- Anti-abuso mínimo + kill switch manual: rate limits, **máximo 1 pod por cuenta** al arrancar (reduce el blast radius), firewall, logs básicos, métricas básicas de CPU/red, botón administrativo "Suspend Pod", capacidad de bloquear IP/token, procedimiento escrito para responder a un abuse report de Hetzner.
+- Billing + lifecycle + control de costos: cadena de control única `Polar → nuestra DB → Hetzner API` (nunca frontend hablando directo con Hetzner, ni Polar creando servidores directo). Cada pod con owner + Hetzner server ID + fecha + spec + estado de billing (`creating → running → restricted → archived → deleted`, ver `OPERATIONS.md`). Revisión periódica (manual al principio) de servidores en Hetzner que la DB no reconozca.
+- **Pérdida máxima por cliente, limitada de entrada**: solo specs chicas/medias habilitadas al lanzar (no vender CCX53/CCX63 a un usuario desconocido el día 1 — el riesgo de una cuenta fraudulenta minando cripto 48hs no se justifica por el margen).
+- Mínimo legal (no enterprise): Terms of Service + Acceptable Use Policy + Privacy Policy + Refund/Cancellation Policy — quién puede usar el producto, usos prohibidos, quién responde por el código ejecutado, cuándo se suspende, qué pasa si no paga, retención de datos, qué pasa al borrar un pod, límite de responsabilidad, política de reembolso.
+
+**Fase 2 — 3 a 10 clientes**
+Recién aquí: provisioning idempotente (reintentar sin crear servidores huérfanos), cleanup automático de recursos huérfanos, backups/restores probados de verdad (no solo "se hace el snapshot"), monitoreo central básico, dunning automático (no manual), límites de cuenta más finos, mejor onboarding, recovery self-service, versionado/upgrade de imagen base.
+
+**Fase 3 — Cuando haya tracción real**
+Recién aquí: AgentPod Mesh (Nivel 2 de coordinación entre pods, Redis multi-tenant, observabilidad cross-pod), MCP Visual (más complejo que Terminal: browser + Xvfb + streaming + WebRTC + takeover — se vende después de validar Terminal, no en paralelo), roles/RBAC por organización, observabilidad central tipo Datadog, control plane robusto para cientos de pods, alta disponibilidad, SLA contractual, compliance empresarial (DPA/GDPR/SOC2) — esto último recién si aparece un cliente real que lo exija, no antes.
+
+**Qué NO se construye antes de la primera venta**: control plane para flota grande, Mesh avanzado, Redis multi-tenant, MCP Visual, observabilidad tipo Datadog, alta disponibilidad/disaster recovery enterprise, roles complejos, SLA contractual, compliance enterprise. Todo eso es capital quemado si todavía no hay un cliente pagando.
+
+## 9. Naming
 Recomendación principal: **AgentPod** (agentpod.ai / .dev / .cloud).
 
 Alternativas:
