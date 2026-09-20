@@ -23,8 +23,13 @@ El MCP server, el A2A server y el agente de OpenTelemetry corren como servicios 
 
 **Contra abuso (esto protege al negocio entero, no solo al cliente):**
 El pod expone `shell.exec` — es ejecución remota de código real. Si un agente (propio o comprometido) lo usa para spam, ataques a terceros, o minado de cripto, **Hetzner puede suspender no solo ese pod, sino toda nuestra cuenta** — el riesgo no es del cliente, es nuestro.
+
+Hetzner no publica números concretos de límite (no hay "tantos paquetes por segundo" oficial) — su política es cualitativa (spam y ataques prohibidos) y lo que sí publican son **tiempos de respuesta ante un aviso de abuso**: 6hs si es escaneo de puertos, 24hs si es ataque de red, 48hs si es abuso de email. Pasado ese plazo sin que respondamos, ellos bloquean la IP directamente.
+
+**Nuestro margen de seguridad**: en vez de esperar a que Hetzner nos avise y tengamos esas horas para reaccionar, nosotros mismos pausamos el pod sospechoso **dentro de los primeros 30 minutos** de detectar tráfico anómalo — bien por debajo de su ventana más chica (6hs). Nunca llegamos a que Hetzner tenga que intervenir.
+
 - Límite de tasa por token (protege también contra un agente en loop infinito).
-- Monitoreo de tráfico saliente: tráfico anómalo (spam, escaneo de puertos, patrones de ataque) pausa el pod automáticamente antes de que Hetzner actúe contra nuestra cuenta.
+- Monitoreo de tráfico saliente: tráfico anómalo (spam, escaneo de puertos, patrones de ataque) pausa el pod automáticamente en <30 min.
 - Log de auditoría de cada uso del token (vía OpenTelemetry, ya definido en `PRODUCT_TYPES.md`) — sirve tanto para que el cliente vea qué hizo su agente como para detectar mal uso.
 - Términos de servicio que prohíben expresamente ese uso, con derecho a suspender sin previo aviso ante abuso detectado.
 
