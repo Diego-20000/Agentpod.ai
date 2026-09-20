@@ -15,11 +15,20 @@ Dos tipos de entorno, mismo motor de aprovisionamiento (Hetzner Cloud API), dist
 - **Target**: casos más avanzados — automatización de tareas visuales, QA de UI, agentes tipo "operador".
 
 ## Herramientas de coordinación (para que los agentes rindan mejor, no solo "se hablen")
-Investigado — esto es lo que la evidencia real de sistemas multi-agente dice que hace falta, más allá de darles un canal de chat:
+Investigado — esto es lo que la evidencia real de sistemas multi-agente dice que hace falta, más allá de darles un canal de chat.
 
-1. **A2A (Agent2Agent)** — activado por defecto en MCP Terminal y MCP Visual (protocolo abierto, Apache-2.0, sin costo de licencia, gobernado por la Linux Foundation junto con Anthropic, OpenAI, Google, Microsoft, AWS y Block). Permite que los agentes se descubran y se manden mensajes.
-2. **Memoria compartida (Redis o similar)** — el problema #1 de los sistemas multi-agente reales: sin esto, cada agente repite trabajo, se contradice con otros, y gasta tokens re-explicando contexto que otro agente del mismo cliente ya tiene. Cada pod expone un store de contexto compartido entre los agentes de ese cliente (aislado de otros clientes).
-3. **Observabilidad/trazabilidad (OpenTelemetry)** — sin esto, un grupo de agentes coordinándose es una caja negra que nadie puede auditar. Es además **requisito legal en la UE desde agosto 2026** (EU AI Act, Article 14 — trazabilidad obligatoria para sistemas de IA de riesgo), así que cualquier cliente europeo lo va a necesitar sí o sí. Esta es la base técnica real de "AgentPod Mesh": el dashboard donde el cliente ve en vivo qué se dijeron y qué hicieron sus agentes, no solo un chat bonito.
+**Nivel 1 — Mismo pod (default, sin costo extra, sin nada nuestro en el medio):**
+Si el cliente mete varios agentes en un mismo pod, se comunican solos: mismo disco, misma red local. Con pocos agentes (2-4), hablan directo entre sí (A2A local + carpeta compartida `/shared/`, con subcarpeta por agente para no pisarse archivos — lo pesado como imágenes va por disco, referencia por mensaje). Con muchos agentes (10+), conviene un patrón de **supervisor**: uno coordina, el resto le reporta a él en vez de hablarse todos entre todos (evita que se enrede exponencialmente).
+
+**Nivel 2 — Varios pods de un mismo cliente, conectados (opcional, pod por pod, nunca automático):**
+Usamos **Hetzner Private Networks** — gratis, viene incluido, no está en el pricing de la API porque no tiene costo. Es una red privada tipo "cable" entre los pods de un cliente: se ven por IP interna, sin pasar por internet.
+
+**Importante — no es automático ni todo-o-nada.** Al crear o editar un pod, el cliente elige, pod por pod: "¿conectar este pod con mis otros pods?" (on/off). Un pod que maneja algo sensible puede quedar aislado aunque el cliente tenga otros 5 pods conectados entre sí. Default: **desconectado**. El cliente decide activar la conexión, nunca al revés.
+
+Sobre esa red, agregamos:
+1. **A2A (Agent2Agent)** — protocolo abierto, Apache-2.0, sin costo de licencia, gobernado por la Linux Foundation junto con Anthropic, OpenAI, Google, Microsoft, AWS y Block. Permite que los agentes de pods distintos (ya conectados por la red privada) se descubran y se manden mensajes.
+2. **Memoria compartida (Redis multi-tenant nuestro)** — evita que cada agente repita trabajo o se contradiga con otro. Solo hace falta cruzar pods porque dentro de un mismo pod ya comparten disco (Nivel 1).
+3. **Observabilidad/trazabilidad (OpenTelemetry)** — sin esto, varios agentes coordinándose entre pods es una caja negra. Además es **requisito legal en la UE desde agosto 2026** (EU AI Act, Article 14). Es la base real de "AgentPod Mesh": el dashboard donde el cliente ve qué se dijeron y qué hicieron sus agentes, solo entre los pods que él eligió conectar.
 
 ## Pricing
 No hay planes fijos — ver `MASTER_SPEC.md` §7. El usuario elige specs reales de Hetzner (CX/CPX/CAX para shared, CCX para dedicado) y el precio se calcula en vivo con markup. El MCP Visual necesita más CPU/RAM por el entorno gráfico + streaming, así que en la práctica conviene en specs desde CPX22 en adelante; MCP Terminal corre bien incluso en CX23 (la spec más chica).
