@@ -11,10 +11,6 @@ En MCP Visual, además: Xvfb, noVNC, Chromium (uno por contenedor de agente).
 
 El MCP server, el A2A server y el agente de OpenTelemetry corren como servicios de sistema (systemd) desde que el pod arranca — el cliente no los levanta a mano.
 
-En MCP Visual, además: Xvfb, noVNC, Chromium (uno por contenedor de agente).
-
-El MCP server, el A2A server y el agente de OpenTelemetry corren como servicios de sistema (systemd) desde que el pod arranca — el cliente no los levanta a mano.
-
 ## 1.5 Flujo de provisioning (paso a paso, con manejo de fallos)
 Arquitectura mínima para Fase 1: `Polar → webhook → DB → worker chico → Hetzner API → pod`. El worker puede ser un proceso simple que consulta una tabla `provision_jobs` — no hace falta Redis ni una cola administrada para 1-10 clientes.
 
@@ -66,13 +62,38 @@ Hetzner no publica números concretos de límite (no hay "tantos paquetes por se
 
 **Login del dashboard**: solo OAuth (Google/GitHub) — nunca password propia. Menos superficie de ataque, no guardamos credenciales de nadie.
 
-## 3. Qué pasa con los datos (pausar/borrar)
-**Corrección importante (confirmado en la FAQ de Hetzner)**: apagar/pausar un servidor **NO detiene la facturación** — Hetzner cobra mientras el servidor exista, esté prendido o apagado. Solo **borrar** el servidor detiene el costo. Esto rompía el modelo de dunning que habíamos armado; se corrige con 3 estados:
+## 3. Lifecycle, acceso y salud — 3 ejes separados, no un solo `status`
+**Corrección de diseño**: mezclar lifecycle + salud + billing en un solo campo `status` termina en estados absurdos (`restricted_resizing_degraded`). Se separan en 3 campos independientes:
 
-- **`running`**: el pod funciona normal, se factura completo.
-- **`restricted`** (ej: no pagó, o abuso detectado): el pod se apaga a nivel de acceso del cliente (no puede usarlo), pero **el servidor de Hetzner sigue existiendo y sigue costando** — por eso el plazo de gracia antes de pasar a `restricted` tiene que ser corto, y de `restricted` a `archived` no puede ser muy largo, porque cada día ahí seguimos pagando por un pod que no genera ingreso.
-- **`archived`**: se genera el snapshot (retención 7 días, $0.0199/GB/mes) y **recién ahí se borra el servidor real** — ahí sí se deja de pagar a Hetzner.
-- El backup completo automático (el +20% de Hetzner) sigue siendo upsell opcional, no viene incluido por defecto.
+```
+lifecycle_status: provisioning | running | resizing | archiving | archived | failed | deleted
+access_status:    active | restricted
+health_status:    healthy | degraded
+```
+
+Un pod puede estar perfectamente en `lifecycle=running, access=restricted, health=healthy` — significa "la infra existe y está sana, pero el cliente no puede usarla" (por falta de pago o abuso). Ejemplo real: cliente no paga → `access=restricted` sin tocar `lifecycle` ni `health`.
+
+**Transiciones válidas de `lifecycle_status`:**
+- `provisioning → running` (éxito) o `provisioning → failed` (error permanente). Nunca `provisioning → archived` directo — no hay nada que archivar todavía.
+- `running → resizing → running` (éxito) o `resizing → running` con `resize_status=failed` si algo salió mal — no se bloquea el pod por un resize fallido, solo se re-consulta el spec real activo en Hetzner y se refleja (si no se puede determinar con certeza cuál spec quedó activo, `health=degraded` + alerta al fundador).
+- Un healthcheck fallido **no es un lifecycle nuevo**, es `health=degraded` mientras `lifecycle` sigue en `running`. Si no se recupera, alerta a un humano — no se borra el pod automáticamente.
+- `running → archiving → archived`: nunca `archiving → deleted` directo, el snapshot es la red de seguridad, siempre se pasa por `archived` primero.
+- `archived → provisioning → running`: restauración manual en Fase 1 (no automática todavía).
+
+**Corrección importante (confirmado en la FAQ de Hetzner)**: apagar un servidor **NO detiene la facturación** — Hetzner cobra mientras el servidor exista, prendido o apagado. Solo **borrar** el servidor (pasar a `archived`) detiene el costo real.
+
+## 3.5 Reconciliación DB ↔ Hetzner (contra la hemorragia silenciosa de dinero)
+Un worker corre **cada 5 minutos** (más una pasada diaria más lenta como control extra) y compara por `agentpod_id` (label en Hetzner) los servidores reales contra la tabla `pods` (excluyendo `deleted`).
+
+- **Servidor en Hetzner sin pod en la DB (huérfano, nos está costando plata)**: nunca se borra en la primera detección — se crea un incidente, se alerta al fundador, y se espera una segunda detección consecutiva 5 min después (por si fue una inconsistencia transitoria, ej. una migración a mitad de camino). Si persiste: firewall deny-all + `shutdown` automático (`quarantined_orphan=true`), pero **el borrado final es manual**. Regla: automático para contener costo/riesgo, manual para destruir datos.
+- **Pod en la DB en `provisioning` sin servidor en Hetzner**: se espera hasta 15 min (el worker puede reintentar el job). Pasado ese plazo: alerta al fundador, `health=degraded`, no se crean servidores de más.
+- **Pod en `running` sin servidor en Hetzner** (alarma roja — pudo ser borrado, corrupción de estado, o error de API): re-consulta inmediata; si sigue sin aparecer, alerta a un humano, `lifecycle=failed`, `access=restricted`. **Nunca se crea un reemplazo automático** — el cliente puede tener datos importantes, la decisión es manual.
+
+**Alertas de fuga de dinero, automáticas:**
+- Cada 5 min: si existe servidor en Hetzner **y** no hay suscripción/entitlement activo en Polar **y** `lifecycle != archived/deleted` → alerta crítica con el costo estimado por día.
+- `access=restricted` por más de 2 horas → warning (seguimos pagando Hetzner por un pod que no genera ingreso — por esto el dunning de "Si no paga" abajo es mucho más corto que lo que se había puesto antes).
+- `provisioning`/`resizing` por más de 15 min, o `archiving` por más de 30 min → warning/crítico (son estados que deberían durar minutos).
+- **Si el cliente paga pero no usa el pod**: no se apaga automáticamente — pagar por una máquina persistente aunque se use poco es legítimo. Solo se manda un resumen informativo semanal ("tu pod lleva 7 días sin actividad de agente"), nunca una acción automática.
 
 ## 4. Resize
 Mecanismo completo, no solo "se apaga y prende":
@@ -81,14 +102,25 @@ Mecanismo completo, no solo "se apaga y prende":
 3. Apagamos vía Hetzner API → cambiamos el `server_type` → prendemos.
 4. Los servicios (MCP, A2A, OTel, los contenedores Docker de agentes visuales) arrancan solos al boot (systemd + `restart: always` en Docker) — el cliente no reconfigura nada.
 5. **Caveat real de Hetzner**: el disco solo puede crecer, nunca achicarse. Si el cliente baja de spec, el disco se queda con el tamaño viejo (más grande) — hay que mostrarlo en el dashboard para que no se sorprenda con el costo de disco.
-6. **Facturación**: como cambia de precio a mitad de mes, guardamos el historial de specs por pod y prorrateamos en la factura de Polar (días en spec A + días en spec B) — no se cobra de más ni de menos.
+6. **Facturación (Fase 1, con Polar de verdad, no cálculo a mano)**: cada spec de Hetzner (CX23, CPX22, etc.) tiene su propio **producto de Polar** ya creado, con precio fijo igual al que calculamos en `MASTER_SPEC.md` §7 (metadata: `{"agentpod_type": "mcp_terminal", "hetzner_server_type": "cx23"}`). Un resize es un `PATCH /v1/subscriptions/{id}` cambiando `product_id` al del nuevo spec, con `proration_behavior=invoice` (upgrade: se cobra la diferencia ya) o `proration_behavior=next_period` (downgrade: por simplicidad, el precio menor arranca en la próxima renovación en vez de generar crédito inmediato). Polar calcula el prorrateo, no lo armamos a mano. **Nota sobre el pricing dinámico de `MASTER_SPEC.md` §7**: el precio se sigue calculando en vivo contra la API de Hetzner para armar/actualizar el catálogo de productos de Polar — pero en el momento del cobro, cada spec ya es un producto fijo de Polar, no un cálculo por transacción.
 
 ## 5. Si no paga
-Nunca se borra de una — es la práctica estándar en SaaS (evita perder al cliente para siempre por un pago que falló por error, ej. tarjeta vencida). Usa los 3 estados del punto 3:
-- Día 1 de atraso: aviso por mail, pod sigue `running`.
-- Día 3: pasa a **`restricted`** (el cliente no puede usarlo, pero el servidor de Hetzner sigue existiendo y sigue costando — por eso este plazo es corto, no conviene mantenerlo así mucho tiempo).
-- Día 14: sigue `restricted`, más avisos (secuencia de dunning).
-- Día 30 sin pago: pasa a **`archived`** (snapshot 7 días + borrado real del servidor — recién ahí dejamos de pagarle a Hetzner por ese pod).
+Nunca se borra de una — es la práctica estándar en SaaS (evita perder al cliente para siempre por un pago que falló por error, ej. tarjeta vencida). Pero el dunning tiene que ser **corto**, porque cada día en `restricted` seguimos pagándole a Hetzner sin cobrar:
+- Día 1 de atraso: aviso por mail, `access=active` todavía.
+- Día 3: `access=restricted` (el cliente no puede usarlo, pero el servidor de Hetzner sigue existiendo y sigue costando).
+- Día 7 (no día 14): sigue `restricted`, último aviso.
+- Día 10 sin pago (no día 30): `lifecycle=archiving` → snapshot 7 días → `archived` (borrado real del servidor — recién ahí se deja de pagarle a Hetzner por ese pod). Un micro-SaaS con infra variable no puede sostener 27+ días de un servidor sin cobrar.
+
+## 5.5 Provisioning falla después de cobrar (con Polar como merchant of record)
+Si Polar confirma el pago pero Hetzner rechaza la creación del servidor, se clasifica el error:
+- **Retryable** (timeout, falla temporal de la API, capacidad transitoria): `provision_job=retrying`, la suscripción queda activa, se reintenta.
+- **Non-retryable, verificado** (límite de cuenta en Hetzner, configuración inválida): `pod=failed`, `access=restricted`, y se dispara automáticamente: `POST /v1/refunds` (reason=`service_disruption`) + revocar/cancelar la suscripción en Polar (nunca solo el reembolso sin cortar el ciclo de cobro futuro). Se espera la confirmación real vía el webhook `order.refunded` de Polar antes de asumir que terminó.
+- **Detalle económico real**: Polar no devuelve el fee de la transacción original al hacer un refund — un reembolso por provisioning fallido puede dejar una pequeña pérdida neta. Por eso el refund automático es solo para fallas **no-retryable y verificadas**, nunca ante cualquier timeout.
+- **Email al cliente** (específico, no genérico): explica qué se intentó, que no se creó ningún servidor ni se dio acceso a nada, que ya se canceló la suscripción y se pidió el reembolso completo vía Polar, y que no tiene que hacer nada de su parte.
+
+## 6.5 Automático vs. humano — la línea concreta
+**Automático**: webhook duplicado, reconciliación, cuarentena de huérfano, retry de provisioning transitorio, reintentos de healthcheck, refund de provisioning permanentemente fallido, restricción por no pago.
+**Humano**: borrado definitivo de un huérfano, recrear un pod con datos del cliente, resolver una inconsistencia DB/Hetzner, abuso confirmado, restauración complicada, cualquier error ambiguo.
 
 ## 6. Templates
 Para el MVP, no. Un solo pod base bien armado (Claude Code + MCP + A2A listos) alcanza. Templates específicos ("agente scraper", "agente QA") se dejan para después de tener uso real — construirlos sin saber qué arma la gente es adivinar.

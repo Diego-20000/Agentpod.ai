@@ -13,7 +13,7 @@ Procedimiento a seguir ante una alerta interna de abuso o un abuse report extern
 ## Minuto 0-5: contener
 1. Identificar: `server_id`, IP, `pod_id`, cliente, motivo del reporte/alerta, timestamp del incidente.
 2. Ejecutar **Suspend Pod** (ver `OPERATIONS.md` §2): firewall deny-all (inbound + outbound) → `shutdown` → si sigue corriendo, `poweroff`.
-3. Marcar `pod.status = restricted`, `incident.status = contained`.
+3. Marcar `access_status = restricted` (ver `OPERATIONS.md` §3 — el pod puede seguir `lifecycle=running` mientras el acceso queda cortado), `incident.status = contained`.
 
 **No investigar primero y bloquear después. Primero se corta el incendio.**
 
