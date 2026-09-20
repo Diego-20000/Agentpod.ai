@@ -34,6 +34,21 @@ A2A:
 
 **Contrato comercial**: "Clientes MCP soportados directamente: Claude Code, Cursor y Gemini CLI. Otros pueden funcionar si soportan Streamable HTTP y headers personalizados, pero no están certificados. Claude Desktop queda fuera del soporte directo del MVP." No prometer Claude Desktop hasta resolver el mecanismo de auth.
 
+## Directorios de conectores (Fase 2/3 — distribución, no requisito técnico)
+
+Un "conector oficial" en estas plataformas **es el mismo MCP server que ya definimos**, solo que revisado y listado para instalación de un clic — no es tecnología distinta. En todas, el usuario ya puede conectar nuestro MCP pegando la URL a mano, esté o no en el directorio; estar listado es marketing/descubrimiento, no un bloqueante técnico.
+
+| Plataforma | ¿Proceso de submission abierto? | Estado (investigado) |
+|---|---|---|
+| Claude (Anthropic) | Sí, portal siempre abierto | Más maduro — revisan auth/datos/tools, contacto `mcp-review@anthropic.com` |
+| ChatGPT (OpenAI) | Sí, vía OpenAI Developer Platform | Submission formal, metadata, política de privacidad (ya en `legal/`), testing |
+| Google Gemini | No hay proceso público (confirmado may. 2026) | Solo self-serve: usuario pega la URL en "Connected Apps", no hay forma de aplicar a listado |
+| Microsoft Copilot | Existe pero orientado a partners/ISV enterprise (M365) | Más pesado, para más adelante |
+| Perplexity | No hay proceso público confirmado | +400 conectores pero sin submission documentado; self-serve MCP remoto igual funciona |
+| Mistral Le Chat | Directorio curado, agregado por Mistral | Self-serve MCP remoto funciona igual sin estar listado |
+
+**Prioridad**: Claude primero (coincide con el público objetivo, Claude Code), ChatGPT segundo — son los únicos con proceso de submission abierto hoy. El resto, cuando haya tracción.
+
 ## Testing de restauración (recovery real, no solo "el snapshot existe")
 
 Ver `RESTORE_TESTING.md` para el procedimiento completo. El resumen: un snapshot demuestra almacenamiento, no recuperación — hay que probar mensualmente que un snapshot se puede convertir en un pod funcional de punta a punta (datos, servicios, MCP, A2A, rotación de token), usando un pod canario sin datos de clientes reales.
