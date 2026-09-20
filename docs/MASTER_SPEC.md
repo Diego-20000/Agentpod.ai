@@ -139,4 +139,4 @@ Alternativas:
 - Developer tool / executable: RunAgent, AgentBox, AgentGrid.
 - Infraestructura & kernel: KernelAgent, HostAgent, HyperAgent.
 
-Frase de pitch: "AgentPod es la plataforma de infraestructura en la nube que permite desplegar pods dedicados y aislados para agentes de IA en menos de un minuto." (corregido: no prometer "5 segundos" sin medición real, ver §2).
+Frase de pitch (corregida tras análisis competitivo, ver `docs/COMPETITION.md`): "AgentPod te da una computadora en la nube, persistente y administrada, para que tu agente de IA (Claude Code, Codex, Gemini CLI, el que sea) trabaje 24/7 — con precio mensual predecible, no medido por segundo." Ya no se vende como "sandbox aislado" (comoditizado por E2B/Daytona) ni como "5 segundos" sin medición real.
