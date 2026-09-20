@@ -31,7 +31,7 @@ No es diseño — es qué tiene que mostrar y qué acciones permite cada superfi
 ## 4. Provisioning / Pod recién creado / Primer acceso (nueva)
 **Estado provisioning**: pod_id, tipo, agente, spec, precio, estado de pago, `lifecycle=provisioning`, `access=restricted`. Progreso en pasos simples (pago confirmado → servidor creado → firewall → servicios → MCP → A2A → health check → acceso habilitado). **Nunca mostrar el token MCP hasta que el health check real termine.**
 
-**Estado listo** (`lifecycle=running, access=active, health=healthy`): specs finales, terminal disponible, instrucciones de conexión MCP, primer paso recomendado. Token MCP entregado **una sola vez** vía mecanismo seguro (nunca visible permanentemente, ver `OPERATIONS.md` §2) — después solo "rotar token" desde el detalle del pod.
+**Estado listo** (`lifecycle=running, access=active, health=healthy`): specs finales, terminal disponible, instrucciones de conexión MCP, primer paso recomendado. Token MCP: API token reutilizable (no de un solo uso, ver `OPERATIONS.md` §2), con vista en texto plano **única al generarlo** (solo se guarda el hash) — si se pierde, "rotar token" desde el detalle del pod, no "volver a ver".
 
 **Falla temporal**: "estamos intentando completar tu pod", sin botón de "crear otro" (evita duplicados/costos). **Falla permanente**: pod no disponible, suscripción cancelada, reembolso solicitado vía Polar, referencia de pedido (alineado a `OPERATIONS.md` §5.5 y `legal/REFUND_POLICY.md`).
 
