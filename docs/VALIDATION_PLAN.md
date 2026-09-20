@@ -42,6 +42,18 @@ Palabra clave: "pagarías", no "¿cuánto pagarías?" (eso abre negociación pre
 
 No pedir USD 1 (se vuelve "click simbólico") ni el mes completo por adelantado. 20-30% del primer mes, reembolsable antes de la entrega, aplicado después al primer período.
 
+## Descuento founding customer (primer mes, no la reserva)
+Además de la reserva, el **primer mes completo** se cobra con **25% de descuento** sobre el precio real de `MASTER_SPEC.md` §7 — calculado para que el margen siga siendo positivo incluso en el spec más chico (verificado, no al costo de Hetzner):
+
+| Spec | Precio normal | Precio founding (25% off) | Margen resultante |
+|---|---|---|---|
+| CX23 | $21.08 | ~$15.81 | ~22% (positivo) |
+| CPX22 | $66.92 | ~$50.19 | ~24% (positivo) |
+
+**Por qué no cobrar al costo de Hetzner**: la comisión de Polar/Mercado Pago es un % del precio, no una resta fija — cobrar exactamente el costo de infra deja margen negativo apenas se descuenta la comisión de pago. 25% de descuento es el punto que atrae al founding customer sin perder plata en el primer mes de cada uno.
+
+**Dónde se cobra la reserva/primer mes**: Mercado Pago "Link de pago" (clientes de Argentina, gratis, sin código) o Polar Checkout Link (clientes del exterior, ya es el proveedor elegido) — no hace falta construir una página de pago propia.
+
 ## Ritmo sostenible (meses, no sprint)
 
 | Cadencia | Cantidad |
