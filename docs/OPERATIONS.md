@@ -36,8 +36,11 @@ Hetzner no publica números concretos de límite (no hay "tantos paquetes por se
 **Login del dashboard**: solo OAuth (Google/GitHub) — nunca password propia. Menos superficie de ataque, no guardamos credenciales de nadie.
 
 ## 3. Qué pasa con los datos (pausar/borrar)
-- **Pausar**: Hetzner deja de facturar cómputo, el disco queda intacto — no se pierde nada.
-- **Borrar**: antes de eliminar en serio, se guarda un snapshot automático por **7 días** (barato: $0.0199/GB/mes) como red de seguridad ante un borrado accidental. Pasado ese plazo, se purga en serio.
+**Corrección importante (confirmado en la FAQ de Hetzner)**: apagar/pausar un servidor **NO detiene la facturación** — Hetzner cobra mientras el servidor exista, esté prendido o apagado. Solo **borrar** el servidor detiene el costo. Esto rompía el modelo de dunning que habíamos armado; se corrige con 3 estados:
+
+- **`running`**: el pod funciona normal, se factura completo.
+- **`restricted`** (ej: no pagó, o abuso detectado): el pod se apaga a nivel de acceso del cliente (no puede usarlo), pero **el servidor de Hetzner sigue existiendo y sigue costando** — por eso el plazo de gracia antes de pasar a `restricted` tiene que ser corto, y de `restricted` a `archived` no puede ser muy largo, porque cada día ahí seguimos pagando por un pod que no genera ingreso.
+- **`archived`**: se genera el snapshot (retención 7 días, $0.0199/GB/mes) y **recién ahí se borra el servidor real** — ahí sí se deja de pagar a Hetzner.
 - El backup completo automático (el +20% de Hetzner) sigue siendo upsell opcional, no viene incluido por defecto.
 
 ## 4. Resize
@@ -50,11 +53,11 @@ Mecanismo completo, no solo "se apaga y prende":
 6. **Facturación**: como cambia de precio a mitad de mes, guardamos el historial de specs por pod y prorrateamos en la factura de Polar (días en spec A + días en spec B) — no se cobra de más ni de menos.
 
 ## 5. Si no paga
-Nunca se borra de una — es la práctica estándar en SaaS (evita perder al cliente para siempre por un pago que falló por error, ej. tarjeta vencida).
-- Día 1 de atraso: aviso por mail.
-- Día 3: se **pausa** el pod (no se borra, el cliente no pierde nada pero no puede usarlo).
-- Día 14: sigue pausado, más avisos (secuencia de dunning).
-- Día 30 sin pago: se borra, con la misma ventana de 7 días de recuperación del punto 3.
+Nunca se borra de una — es la práctica estándar en SaaS (evita perder al cliente para siempre por un pago que falló por error, ej. tarjeta vencida). Usa los 3 estados del punto 3:
+- Día 1 de atraso: aviso por mail, pod sigue `running`.
+- Día 3: pasa a **`restricted`** (el cliente no puede usarlo, pero el servidor de Hetzner sigue existiendo y sigue costando — por eso este plazo es corto, no conviene mantenerlo así mucho tiempo).
+- Día 14: sigue `restricted`, más avisos (secuencia de dunning).
+- Día 30 sin pago: pasa a **`archived`** (snapshot 7 días + borrado real del servidor — recién ahí dejamos de pagarle a Hetzner por ese pod).
 
 ## 6. Templates
 Para el MVP, no. Un solo pod base bien armado (Claude Code + MCP + A2A listos) alcanza. Templates específicos ("agente scraper", "agente QA") se dejan para después de tener uso real — construirlos sin saber qué arma la gente es adivinar.

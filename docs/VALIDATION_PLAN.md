@@ -32,4 +32,6 @@ Planilla simple (Google Sheets o CSV local) con columnas:
 `fecha | nombre | canal | mensaje enviado | respuesta | interesado (sí/no) | notas`
 
 ## Próximo paso después de validar
-Si se cumple el umbral: MVP minimalista (2-3 días) con integración Mercado Pago y notificaciones automáticas (semanas 3-6 del plan general, ver `MASTER_SPEC.md`).
+Si se cumple el umbral: MVP minimalista (2-3 días) con integración **Polar** (única fuente de verdad de billing, ver `MASTER_SPEC.md` §7 — se sacó Mercado Pago de este plan para no tener dos sistemas de cobro en paralelo) y notificaciones automáticas (semanas 3-6 del plan general).
+
+**Corrección al criterio de validación**: "¿querés probarlo gratis?" mide curiosidad, no negocio. Se reemplaza por 4 etapas: (1) interés — 30-50 prospectos; (2) problema confirmado — al menos 10 que digan concretamente que hoy tienen este problema; (3) intención monetaria — presentar el producto con precio real, no gratis; (4) señal fuerte — objetivo: **3 personas dispuestas a pagar/reservar un pod**, antes de construir el sistema completo. "Uh sí, estaría bueno" no cuenta como validación; "sí, cobrámelo a $20/mes cuando esté" sí.
