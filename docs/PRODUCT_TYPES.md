@@ -3,10 +3,15 @@
 Dos tipos de entorno, mismo motor de aprovisionamiento (Hetzner Cloud API), distinta capa de acceso. Se sacó del catálogo el "Servidor Normal" (VPS pelado sin MCP): no tiene el diferencial real del producto — quien solo quiere cómputo sin agente va directo a Hetzner y no paga nuestro margen. Solo vendemos lo que integra MCP + A2A, no cómputo pelado.
 
 ## 1. Servidor MCP Terminal
-- **Qué es**: el mismo pod, pero corriendo un **MCP server** que expone herramientas de shell/filesystem/git al agente (Claude Code, LangChain, etc.) vía protocolo MCP, **más soporte A2A** para que ese agente pueda descubrir y hablar con otros agentes (propios o de otros pods).
-- **Para qué sirve**: el agente ejecuta comandos, lee/escribe archivos, corre tests — todo por texto, sin interfaz visual. Es el caso de uso central del pitch original (agentes que corren código arbitrario, aislados). Con A2A, además puede coordinarse con otros agentes en vez de trabajar solo.
-- **Acceso**: terminal web (para el humano) + endpoint MCP (para el agente/cliente MCP tipo Claude Desktop, Cursor, etc.) + endpoint A2A (Agent Card publicada, para que otros agentes lo descubran).
-- **Target**: dev que ya usa Claude Code/agentes y quiere que corran aislados, no en su máquina.
+- **Qué es**: un pod con dos capas separadas: (1) un **MCP server** que expone herramientas de shell/filesystem/git — la caja de herramientas, no piensa, solo ejecuta lo que le piden; (2) un **agente de IA corriendo adentro del pod** (por defecto Claude Code, ver "Qué agente corre adentro" abajo) que usa esas herramientas para trabajar de forma autónoma, 24/7, sin depender de que la compu del cliente esté prendida. Más **soporte A2A** para que ese agente descubra y hable con otros agentes (propios o de otros pods).
+- **Para qué sirve**: el agente ejecuta comandos, lee/escribe archivos, corre tests — todo por texto, sin interfaz visual. Es el caso de uso central del pitch original: el agente corre en la nube, no en la compu del cliente.
+- **Acceso**: terminal web (para que el humano mire/intervenga) + endpoint MCP externo (opcional — para que el cliente, desde su propio Claude Desktop/Cursor, supervise o le dé una orden puntual al pod desde afuera, sin que sea el mecanismo principal de ejecución) + endpoint A2A (Agent Card publicada, para que otros agentes lo descubran).
+- **Target**: dev que ya usa agentes de IA y quiere que corran aislados y persistentes, no en su máquina.
+
+### Qué agente corre adentro — no depende de Claude
+El pod no es Claude-específico: es Ubuntu + MCP server + A2A, y **cualquier agente que hable MCP puede instalarse ahí** — MCP es un protocolo abierto, no propiedad de Anthropic. Por defecto instalamos **Claude Code** (porque es el que mejor encaja con el pitch y el que más pedimos investigar), pero al crear el pod el cliente elige de una lista: Claude Code, Cursor CLI, Gemini CLI, u otro agente compatible con MCP. Todos usan el mismo MCP server y el mismo registrador A2A local — no hay que rehacer nada por debajo, solo cambia qué proceso se instala y arranca.
+
+**Bring your own key (BYOK)**: no revendemos tokens de ningún modelo de IA — el cliente pone su propia cuenta/API key (Anthropic, OpenAI, Google, la que use), exactamente como si corriera el agente en su compu. Esto mantiene el margen limpio (no dependemos de cuánto gasta el cliente en tokens) y es el mismo modelo que usan E2B, Daytona, GitHub Codespaces.
 
 ## 2. MCP Visual (Computer Use)
 - **Qué es**: pod con MCP server + entorno gráfico (Xorg/VNC) + streaming WebRTC/noVNC a 60 FPS, **más soporte A2A** igual que el Terminal. El agente controla un navegador o GUI real (mouse, teclado, screenshots) vía MCP tools tipo `computer_use`, y puede coordinarse con otros agentes vía A2A.
