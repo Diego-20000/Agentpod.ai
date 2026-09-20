@@ -26,6 +26,8 @@ Arquitectura mínima para Fase 1: `Polar → webhook → DB → worker chico →
 ## 2. Seguridad y acceso
 
 **Tokens MCP (mecanismo concreto, Fase 1):**
+- **Gate previo a emitir cualquier token: email verificado.** Login social (Google/GitHub) ya llega verificado por el proveedor, así que en la práctica el gate se cumple solo con el login actual (`PAGE_CONTENT.md`); si más adelante se agrega login con email/password propio, se bloquea la generación del token hasta confirmar el email (link a `/verify-email?token=...`). Mismo patrón que Stripe/GitHub: se puede tener cuenta sin verificar, no se puede sacar credenciales de API.
+- **El token no es de un solo uso**: es una credencial de API persistente (igual que un API key de Stripe/GitHub), válida para todas las conexiones MCP del pod hasta que se rote — no se regenera en cada conexión ni "se gasta" al usarla. Lo único que ocurre una sola vez es la vista en texto plano en pantalla (ver punto de entrega abajo); si se pierde, se rota, no se "recupera".
 - Formato: `ap_sk_live_` + 32 bytes aleatorios (`secrets.token_urlsafe`) — prefijo reconocible, si se filtra a un repo público las herramientas de escaneo de secretos de GitHub lo detectan solas.
 - Guardamos solo `sha256(token)` en la DB; el token en texto plano **nunca** se persiste ahí.
 - Durante el provisioning, el token entra al `user_data` de cloud-init solo para configurar el servicio MCP; el bootstrap lo deja en `/etc/agentpod/mcp.token` con `chmod 600`, dueño del usuario del servicio — nunca como variable de entorno visible en un `systemd` genérico.
