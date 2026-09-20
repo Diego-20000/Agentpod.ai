@@ -21,6 +21,15 @@
 - Canales de búsqueda 100% asincrónicos (sin videollamadas): Wefunder, Republic (crowdfunding de equity), Platanus Ventures (entrevista por chat, no video), TinySeed / Earnest Capital / Calm Company Fund (fondos para SaaS solo-founder, proceso por escrito), AngelList/Wellfound.
 - **Nota importante**: la compra de un departamento propio (vivienda) NO forma parte del uso de fondos de la ronda — es gasto personal, separado, a pagar con ingresos propios cuando el negocio facture. Incluir gastos personales no declarados en el uso de fondos de un SAFE es mal uso de capital de riesgo y un riesgo legal/reputacional real. El runway sí incluye **alquiler**, que es gasto de vida legítimo.
 
+### Encuadre legal para cobrar el primer cliente (antes de cualquier SAFE/Delaware)
+**No hace falta constituir una empresa (ni Delaware ni ninguna) para tener los primeros clientes pagando.** Se puede operar como **persona física** en Argentina: nombre legal completo + CUIT + domicilio + encuadre fiscal (monotributo u otro régimen, a determinar con un contador argentino) + facturación electrónica correspondiente (ARCA exige comprobante tipo C o E según el caso para monotributistas). "AgentPod" es el nombre comercial del servicio; el contratante real es la persona física — no hay separación de patrimonio automática sin una sociedad, algo a tener presente pero que no bloquea arrancar.
+
+**No usar "AgentPod Inc." / "AgentPod LLC" en ningún documento hasta que esa entidad exista de verdad.**
+
+**Bloqueante real a chequear antes de cobrar (no Delaware "por si acaso")**: los Master Services Terms de Polar (el proveedor elegido como Merchant of Record, ver §7) exigen que el proveedor mantenga a su costo seguro de responsabilidad civil general, profesional (errores y omisiones) y **cyber liability**, con certificado disponible a pedido. Hay que verificar directamente en la cuenta de Polar si esto aplica igual a una cuenta chica/nueva y qué cobertura exigirían en la práctica — puede ser un costo real no contemplado todavía en el presupuesto.
+
+**Checklist legal mínimo antes de cobrar**: nombre legal real + CUIT/encuadre fiscal + domicilio + los 4 documentos de `docs/legal/` (Términos de Servicio, Acceptable Use Policy, Privacy Policy, Refund Policy, con placeholders reemplazados) + Botón de Arrepentimiento y Botón de Baja de Servicio visibles desde el primer acceso (obligatorio desde la Disposición 954/2025) + revisión de los Supplier Terms de Polar.
+
 ## 4. Uso de Fondos ($265,000 USD, 24 meses)
 
 | Categoría | Detalle | Monto (USD) | % |
