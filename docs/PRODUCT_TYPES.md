@@ -14,6 +14,18 @@ Dos tipos de entorno, mismo motor de aprovisionamiento (Hetzner Cloud API), dist
 - **Acceso**: terminal web + endpoint MCP + endpoint A2A + stream de escritorio embebido (el humano puede mirar/tomar control en cualquier momento).
 - **Target**: casos más avanzados — automatización de tareas visuales, QA de UI, agentes tipo "operador".
 
+### Varios agentes visuales en un mismo pod: aislamiento real, no solo "no pisarse"
+Separar pantallas virtuales (displays distintos) evita que dos agentes se peleen por el mismo mouse, pero **no alcanza**: si corren sueltos en el mismo sistema operativo, uno podría llegar a los archivos o procesos del otro — y eso contradice la promesa central del producto ("aislamiento total").
+
+**Corrección: cada agente visual va en su propio contenedor (Docker), no solo en su propio display.**
+- Cada contenedor tiene su pantalla virtual (Xvfb), su navegador, su mouse/teclado virtual (son eventos de software, nunca hardware real) y su propio filesystem — no puede tocar nada del contenedor vecino, aunque estén en el mismo pod físico.
+- Un proxy chico adentro del pod expone el stream de cada contenedor en su propia URL (`/agente-1/`, `/agente-2/`); el dashboard deja elegir cuál mirar, nunca todos mezclados en una pantalla.
+
+**Costo real de esto (no aproximado)**: cada sesión completa (Xvfb + navegador + streaming) necesita ~1.5-2GB de RAM para andar bien.
+- CPX22 (4GB) → 1 agente visual cómodo.
+- CPX32 (8GB) → 3-4 agentes visuales concurrentes.
+- Más que eso: specs más grandes, o repartir en varios pods (ver Nivel 2 abajo).
+
 ## Herramientas de coordinación (para que los agentes rindan mejor, no solo "se hablen")
 Investigado — esto es lo que la evidencia real de sistemas multi-agente dice que hace falta, más allá de darles un canal de chat.
 
