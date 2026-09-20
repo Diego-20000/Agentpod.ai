@@ -41,7 +41,13 @@ Hetzner no publica números concretos de límite (no hay "tantos paquetes por se
 - El backup completo automático (el +20% de Hetzner) sigue siendo upsell opcional, no viene incluido por defecto.
 
 ## 4. Resize
-Hetzner permite cambiar de spec, pero el pod tiene que estar apagado durante el cambio (uno o dos minutos), y el disco solo puede crecer, nunca achicarse. Se comunica claro en el dashboard: "esto va a apagar tu pod ~2 min, tus datos no se tocan".
+Mecanismo completo, no solo "se apaga y prende":
+1. Cliente pide resize desde el dashboard → avisamos "esto apaga tu pod ~2 min".
+2. Antes de apagar, se manda una señal a los servicios (MCP/A2A) para que el agente pueda frenar en un punto seguro, no cortarlo a mitad de tarea sin avisar.
+3. Apagamos vía Hetzner API → cambiamos el `server_type` → prendemos.
+4. Los servicios (MCP, A2A, OTel, los contenedores Docker de agentes visuales) arrancan solos al boot (systemd + `restart: always` en Docker) — el cliente no reconfigura nada.
+5. **Caveat real de Hetzner**: el disco solo puede crecer, nunca achicarse. Si el cliente baja de spec, el disco se queda con el tamaño viejo (más grande) — hay que mostrarlo en el dashboard para que no se sorprenda con el costo de disco.
+6. **Facturación**: como cambia de precio a mitad de mes, guardamos el historial de specs por pod y prorrateamos en la factura de Polar (días en spec A + días en spec B) — no se cobra de más ni de menos.
 
 ## 5. Si no paga
 Nunca se borra de una — es la práctica estándar en SaaS (evita perder al cliente para siempre por un pago que falló por error, ej. tarjeta vencida).

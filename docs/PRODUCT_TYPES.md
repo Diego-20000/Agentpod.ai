@@ -32,6 +32,8 @@ Investigado — esto es lo que la evidencia real de sistemas multi-agente dice q
 **Nivel 1 — Mismo pod (default, sin costo extra, sin nada nuestro en el medio):**
 Si el cliente mete varios agentes en un mismo pod, se comunican solos: mismo disco, misma red local. Con pocos agentes (2-4), hablan directo entre sí (A2A local + carpeta compartida `/shared/`, con subcarpeta por agente para no pisarse archivos — lo pesado como imágenes va por disco, referencia por mensaje). Con muchos agentes (10+), conviene un patrón de **supervisor**: uno coordina, el resto le reporta a él en vez de hablarse todos entre todos (evita que se enrede exponencialmente).
 
+**Cómo se encuentran entre sí dentro del pod (sin nosotros en el medio):** cada pod corre un **registrador local chiquito** (proceso liviano, sin persistencia — dura lo mismo que el pod, no hace falta más). Cada agente, al arrancar (contenedor Docker o proceso), se anota solo ahí (`localhost:9000/registry`) con su nombre, su puerto, y la URL de su Agent Card (`http://localhost:PUERTO/.well-known/agent.json`, el estándar A2A). Cuando un agente quiere saber quién más hay, consulta ese registrador — todo local, nada pasa por nuestros servidores. Si el cliente agrega un agente nuevo, se registra solo y los demás lo ven sin reiniciar nada. Esto es distinto y más liviano que el registro central del Nivel 2 (entre pods).
+
 **Nivel 2 — Varios pods de un mismo cliente, conectados (opcional, pod por pod, nunca automático):**
 Usamos **Hetzner Private Networks** — gratis, viene incluido, no está en el pricing de la API porque no tiene costo. Es una red privada tipo "cable" entre los pods de un cliente: se ven por IP interna, sin pasar por internet.
 
