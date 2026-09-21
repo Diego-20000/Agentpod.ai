@@ -15,7 +15,7 @@
    - **Sistema**: `systemctl --failed` sin servicios críticos caídos.
    - **Health**: `GET /healthz` en OK.
    - **A2A**: `GET /.well-known/agent-card.json` con `protocolVersion: 1.0`.
-   - **MCP real**: conectar con un cliente realmente soportado (Claude Code o Gemini CLI, ver `COMPATIBILITY.md`) con el token nuevo y pedirle una acción real (ej. leer el archivo sentinel vía la tool de filesystem) — prueba la cadena completa (HTTPS → auth → MCP → herramienta → filesystem restaurado), no solo que el servidor responda.
+   - **MCP real**: conectar con un cliente realmente soportado (Claude Code o Antigravity CLI, ver `COMPATIBILITY.md`) con el token nuevo y pedirle una acción real (ej. leer el archivo sentinel vía la tool de filesystem) — prueba la cadena completa (HTTPS → auth → MCP → herramienta → filesystem restaurado), no solo que el servidor responda.
 
 ## Criterio de "restore exitoso"
 ```

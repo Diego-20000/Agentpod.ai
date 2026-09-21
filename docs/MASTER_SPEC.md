@@ -139,4 +139,4 @@ Alternativas:
 - Developer tool / executable: RunAgent, AgentBox, AgentGrid.
 - Infraestructura & kernel: KernelAgent, HostAgent, HyperAgent.
 
-Frase de pitch (corregida tras análisis competitivo, ver `docs/COMPETITION.md`): "AgentPod te da una computadora en la nube, persistente y administrada, para que tu agente de IA (Claude Code, Codex, Gemini CLI, el que sea) trabaje 24/7 — con precio mensual predecible, no medido por segundo." Ya no se vende como "sandbox aislado" (comoditizado por E2B/Daytona) ni como "5 segundos" sin medición real.
+Frase de pitch (corregida tras análisis competitivo, ver `docs/COMPETITION.md`): "AgentPod te da una computadora en la nube, persistente y administrada, para que tu agente de IA (Claude Code, Cursor, Antigravity CLI, el que sea) trabaje 24/7 — con precio mensual predecible, no medido por segundo." Ya no se vende como "sandbox aislado" (comoditizado por E2B/Daytona) ni como "5 segundos" sin medición real. (Corregido sep. 2026: "Codex" y "Gemini CLI" reemplazados — Cursor es el cliente real que soportamos, y Google discontinuó Gemini CLI el 18 jun 2026 en favor de Antigravity CLI, ver `COMPATIBILITY.md`.)

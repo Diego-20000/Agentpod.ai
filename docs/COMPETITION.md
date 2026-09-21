@@ -21,7 +21,7 @@ Investigado y verificado (spot-check de los hechos más importantes: Fly.io Spri
 ## Los 5 pilares de diferenciación que quedan en pie
 1. **Persistente, no por sesión**: "tu agente tiene una computadora, no una sesión."
 2. **Economía predecible**: precio mensual fijo por spec, no medido por segundo/sandbox/storage.
-3. **Neutral de proveedor**: Claude Code, Codex, Gemini CLI, OpenCode — no atado a un solo modelo ni a un ecosistema (a diferencia de Railway).
+3. **Neutral de proveedor**: Claude Code, Cursor, Antigravity CLI — no atado a un solo modelo ni a un ecosistema (a diferencia de Railway). (Corregido sep. 2026: Google discontinuó Gemini CLI el 18 jun 2026, reemplazado por Antigravity CLI — ver `COMPATIBILITY.md`.)
 4. **Administrado de fábrica**: el diferencial no es "tenés una VM", es "no tenés que administrarla" (MCP, A2A, firewall, lifecycle, provisioning, logs, suspensión, billing ya resueltos).
 5. **Barato para dejar corriendo**: mientras la competencia optimiza para sesiones cortas o cobra extra por always-on, nuestro pricing de Hetzner ya es más barato en always-on real que Maritime, Fly Sprites o Railway.
 

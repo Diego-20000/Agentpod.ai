@@ -28,11 +28,13 @@ A2A:
 |---|---|---|---|---|
 | Claude Code | 2.1.278 (19 sep 2026) | Streamable HTTP | `Authorization: Bearer` | **Soportado directamente** |
 | Cursor | 3.21 | Streamable HTTP | Header HTTP personalizado | **Soportado directamente** |
-| Gemini CLI | 0.60.0 (15 sep 2026) | Streamable HTTP | Header HTTP personalizado | **Soportado directamente** |
+| Antigravity CLI | — (ver nota) | Streamable HTTP | Header HTTP personalizado (`serverUrl` + `headers`, sin OAuth) | **Soportado directamente** |
 | Claude Desktop | — | Remote MCP vía Custom Connectors | El flujo documentado hoy es OAuth, no header custom | **No soportado directamente en el MVP** — requeriría OAuth o un bridge, queda fuera de alcance por ahora |
 | Otros hosts MCP | Variable | Streamable HTTP | Deben permitir headers HTTP personalizados | Best effort, no certificado |
 
-**Contrato comercial**: "Clientes MCP soportados directamente: Claude Code, Cursor y Gemini CLI. Otros pueden funcionar si soportan Streamable HTTP y headers personalizados, pero no están certificados. Claude Desktop queda fuera del soporte directo del MVP." No prometer Claude Desktop hasta resolver el mecanismo de auth.
+**Contrato comercial**: "Clientes MCP soportados directamente: Claude Code, Cursor y Antigravity CLI. Otros pueden funcionar si soportan Streamable HTTP y headers personalizados, pero no están certificados. Claude Desktop queda fuera del soporte directo del MVP." No prometer Claude Desktop hasta resolver el mecanismo de auth.
+
+**Corrección importante (verificado sep. 2026)**: Google discontinuó **Gemini CLI** el 18 de junio de 2026 para usuarios Pro/Ultra/free y lo reemplazó por **Antigravity CLI** (reescrito en Go, sigue soportando MCP remoto vía `serverUrl` + `headers`, sin OAuth — mismo mecanismo de auth que ya usábamos). Gemini CLI solo sigue vivo para licencias enterprise Gemini Code Assist, que no es nuestro público. Se reemplaza en todo el contrato y el demo.
 
 ## Directorios de conectores (Fase 2/3 — distribución, no requisito técnico)
 

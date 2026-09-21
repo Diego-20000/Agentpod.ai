@@ -9,7 +9,7 @@ No es diseño — es qué tiene que mostrar y qué acciones permite cada superfi
 ## 1. Landing
 - Qué es AgentPod: computadora cloud persistente, VM dedicada por cliente, MCP+A2A incluidos, BYOK (no vendemos tokens de IA).
 - Tipos: MCP Terminal (única opción comprable en Fase 1); MCP Visual mostrado como "próximamente" (se construye después de validar Terminal, ver `MASTER_SPEC.md` §8).
-- Agentes compatibles: Claude Code, Cursor CLI, Gemini CLI, otros MCP.
+- Agentes compatibles: Claude Code, Cursor CLI, Antigravity CLI, otros MCP.
 - Pricing: sin planes fijos, precio según spec real de Hetzner.
 - Persistencia, seguridad (VM dedicada, firewall, MCP/A2A autenticados), snapshot de 7 días al archivar.
 - Nada de: "5 segundos", SLA/uptime prometido, "aislamiento absoluto", Mesh avanzado — contradice `MASTER_SPEC.md`/`COMPETITION.md` ya corregidos.
@@ -22,7 +22,7 @@ No es diseño — es qué tiene que mostrar y qué acciones permite cada superfi
 
 ## 3. Configurador de Pod
 - Tipo de pod: MCP Terminal (comprable); MCP Visual bloqueado/"próximamente" en Fase 1.
-- Selector de agente: Claude Code (default), Cursor CLI, Gemini CLI, otro MCP — con aviso BYOK.
+- Selector de agente: Claude Code (default), Cursor CLI, Antigravity CLI, otro MCP — con aviso BYOK.
 - Catálogo real de Hetzner (vCPU/RAM/disco/tipo), no "planes".
 - Precio en vivo, opcionales (backup, volumen extra).
 - Aviso operacional antes de pagar: resize implica downtime ~2min, disco no se achica, apagar no detiene el costo de Hetzner, secuencia `restricted→archiving→archived` si no paga, snapshot 7 días.

@@ -3,7 +3,7 @@
 Guía de cliente (texto listo para usar en la pantalla "Provisioning/Primer acceso" de `PAGE_CONTENT.md`). Contrato técnico fijado en `COMPATIBILITY.md`: endpoint `/mcp`, token con prefijo `ap_sk_live_`.
 
 ## Antes de empezar
-MCP conecta tu cliente de IA con las herramientas de tu pod: **Claude Code / Cursor / Gemini CLI → AgentPod → herramientas del pod**. El token MCP autoriza ese acceso — no es tu API key de Anthropic/OpenAI/Google (BYOK, esa la configurás vos dentro del pod).
+MCP conecta tu cliente de IA con las herramientas de tu pod: **Claude Code / Cursor / Antigravity CLI → AgentPod → herramientas del pod**. El token MCP autoriza ese acceso — no es tu API key de Anthropic/OpenAI/Google (BYOK, esa la configurás vos dentro del pod).
 
 **1. Copiá tu endpoint MCP** desde el detalle del pod → sección MCP. Ejemplo: `https://pod-abc123.agentpod.ai/mcp`. No agregues `/sse` ni `/agent-card.json` (ese es de A2A, no de MCP).
 
@@ -33,7 +33,7 @@ Configurar como servidor MCP **global** (`~/.cursor/mcp.json`, no en un archivo 
 ```
 Reiniciar/recargar Cursor y verificar en la sección MCP que `agentpod` aparezca conectado.
 
-## Gemini CLI
+## Antigravity CLI
 ```bash
 read -s AGENTPOD_MCP_TOKEN
 echo
